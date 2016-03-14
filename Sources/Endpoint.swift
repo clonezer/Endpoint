@@ -122,7 +122,8 @@ public extension Endpoint {
     /// - Returns: The `Alamofire.Request` instance.
     public func request(parameters: [String: AnyObject]? = nil,
                         encoding: Alamofire.ParameterEncoding = .URL,
-                        unless: URLStringConvertible? = nil) -> Alamofire.Request {
+                        unless: URLStringConvertible? = nil,
+                        headers: [String: String]? = nil) -> Alamofire.Request {
         let (method, URL, otherValues) = self.buildURL(parameters)
 
         // if `unless` is the URL string
@@ -132,6 +133,10 @@ public extension Endpoint {
         // if `unless` is the URL path
         if let path = unless?.URLString {
             return Alamofire.request(method, self.dynamicType.baseURLString + path)
+        }
+                            
+        if headers != nil {
+            return Alamofire.request(method, URL, parameters: otherValues, encoding: encoding, headers: headers)
         }
 
         return Alamofire.request(method, URL, parameters: otherValues, encoding: encoding)
